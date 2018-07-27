@@ -1,0 +1,42 @@
+{
+  "name": "slack-clone-client",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "babel-eslint": "^8.2.6",
+    "eslint": "^4.8.0",
+    "eslint-config-airbnb": "^16.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "react-scripts": "1.0.14"
+  },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.2.6",
+    "apollo-client": "^2.3.7",
+    "apollo-link": "^1.2.2",
+    "apollo-link-context": "^1.0.8",
+    "apollo-link-http": "^1.5.4",
+    "formik": "^1.0.2",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "jwt-decode": "^2.2.0",
+    "lodash": "^4.17.10",
+    "mobx": "^5.0.3",
+    "mobx-react": "^5.2.3",
+    "react": "^16.0.0",
+    "react-apollo": "^2.1.9",
+    "react-dom": "^16.0.0",
+    "react-router-dom": "^4.2.2",
+    "semantic-ui-css": "^2.2.12",
+    "semantic-ui-react": "^0.74.2",
+    "styled-components": "^3.3.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "lint": "eslint src"
+  }
+}
