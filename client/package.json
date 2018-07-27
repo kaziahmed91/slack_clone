@@ -20,6 +20,7 @@
     "formik": "^1.0.2",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
+    "hoek": "^5.0.3",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.10",
     "mobx": "^5.0.3",
