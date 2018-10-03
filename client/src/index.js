@@ -20,7 +20,7 @@ const middlewareLink = setContext(() => ({
     'x-refresh-token': localStorage.getItem('refreshToken'),
   },
 }));
-// The following runs after every graphQl request
+// The following runs after every graphQl request using to refresh tokens automatically
 const afterwareLink = new ApolloLink((operation, forward) => {
   const { headers } = operation.getContext();
 
@@ -42,11 +42,14 @@ const afterwareLink = new ApolloLink((operation, forward) => {
 
 const link = afterwareLink.concat(middlewareLink.concat(httpLink));
 
+
+//  we are casching
 const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
 });
 
+//  passing the client to apollo proider
 const App = (
   <ApolloProvider client={client}>
     <Routes />

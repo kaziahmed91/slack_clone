@@ -4,7 +4,9 @@ import { withFormik } from "formik";
 import gql from "graphql-tag";
 import { compose, graphql } from "react-apollo";
 import styled from "styled-components";
+import normalizeErrors from '../normalizeErrors';
 
+// we can have a styled.div or styled(modal) depending on component or element.\
 const StyledModal = styled(Modal)`
   && {
     margin-top: auto !important;
@@ -14,14 +16,17 @@ const StyledModal = styled(Modal)`
   }
 `;
 
-const InvitePeopleModal = ({
+// The following variables are from Formik
+const InvitePeopleModal = ({ 
   open,
   onClose,
   values,
   handleChange,
   handleBlur,
   handleSubmit,
-  isSubmitting
+  isSubmitting, 
+  touched, 
+  errors, // <- these are used to show errors 
 }) => (
   <StyledModal open={open} onClose={onClose}>
     <Modal.Header>Invite People To Your Team</Modal.Header>
@@ -37,6 +42,8 @@ const InvitePeopleModal = ({
             placeholder="User Email"
           />
         </Form.Field>
+          
+          <p>{touched.email && errors.email ? errors  : null}</p>
         <Form.Group widths="equal">
           <Button disabled={isSubmitting} fluid onClick={onClose}>
             Cancel
@@ -57,7 +64,7 @@ const InvitePeopleModal = ({
 
 const addTeamMemberMutaton = gql`
   mutation($email: String!, $teamId: Int!) {
-    addTeamMemberMutaton (email: $email, teamId: $teamId) {
+    addTeamMember (email: $email, teamId: $teamId) {
         ok
         errors {
             path  
@@ -65,21 +72,30 @@ const addTeamMemberMutaton = gql`
         }
     }
   }
-`;
-
+`;  
+// Compose allows adding multiple higher order functions. React-Apollo TINGS
 export default compose(
-  // Compose allows adding multiple higher order functions.
   graphql(addTeamMemberMutaton),
   withFormik({
     mapPropsToValues: () => ({ email: "" }), // the name here is mapped to  input values.name
-    handleSubmit: async (values,{ props: { onClose, teamId, mutate }, setSubmitting }) => 
+      // The following values in the function below are formik specific 
+    handleSubmit: async (values,{ props: { onClose, teamId, mutate }, setSubmitting, setErrors }) => 
     {
       const response = await mutate({
-        variables: { teamId, email: values.email},  
+        variables: { teamId, email: values.email },
       });
-      console.log(response);
-      onClose();
-      setSubmitting(false);
+      // console.log(response);
+      const { ok,errors } = response.data.addTeamMember;
+      // The follownig f(x) are formik specific 
+      if (ok) {
+        onClose(); // close modal
+        setSubmitting(false); // reset form and button
+      } else {
+        setSubmitting(false);
+        let err = normalizeErrors(errors)
+        console.log(err)
+        setErrors(err); // NormalizeErrors is a util function we created
+      }
     }
   })
 )(InvitePeopleModal);

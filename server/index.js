@@ -28,8 +28,8 @@ app.use(cors('*'));
 
 /** The following is a middleware 
  * 1) looks for token in header. If exists and not expired, it verifies  and then assigns the user obj to the request
- * 2) If token is not found or valid. we find the refresh token in header and attempt to refresh the original token  
-*/
+ * 2) If token is not found or invalid. we find the refresh token in header and attempt to refresh the original token  
+*/ 
 const addUser = async (req, res, next) => {
   const token = req.headers['x-token'];
   if (token) {
@@ -69,6 +69,6 @@ app.use(
 
 app.use('/graphiql', graphiqlExpress({ endpointURL: graphqlEndpoint }));
 
-models.sequelize.sync({force: true}).then(() => {
+models.sequelize.sync({}).then(() => {
   app.listen(8081);
 });

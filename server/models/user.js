@@ -39,7 +39,7 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      hooks: { // hashing is now done after data recieved instead of doing it in resolver 
+      hooks: { // hashing is now done after data recieved instead of doing it in resolver
         afterValidate: async (user) => {
           const hashedPassword = await bcrypt.hash(user.password, 12);
           // eslint-disable-next-line no-param-reassign

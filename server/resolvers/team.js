@@ -2,6 +2,7 @@ import formatErrors from '../formatErrors';
 import requiresAuth from '../permissions';
 
 export default {
+  // Below the entire resolver is wrapped with createResolver -> which is chekcing if the user is created or not
   Query: {
     allTeams: requiresAuth.createResolver(async (parent, args, { models, user }) =>
       models.Team.findAll({ where: { owner: user.id } }, { raw: true })),
@@ -11,29 +12,42 @@ export default {
     //  Then createResolver is being run if authenticated. 
     createTeam: requiresAuth.createResolver(async (parent, args, { models, user }) => {
       try {
-        const team = await models.Team.create({ ...args, owner: user.id });
-        await models.Channel.create({ name: 'general', public: true, teamId: team.id });
+
+        // Transaction makes sure multiple db transactions successfully go through. 
+        // If one of them does not, then the entire transaction is void.
+        // we are creating a general channel automatically once a team is created
+        const response = await models.sequelize.transaction(
+          async () => {
+            const team = await models.Team.create({ ...args, owner: user.id });
+            await models.Channel.create({ name: 'general', public: true, teamId: team.id });
+            return team; 
+          }
+        )
+
         return {
           ok: true,
-          team,
+          team: response,
         };
       } catch (err) {
         console.log(err);
         return {
           ok: false,
-          errors: formatErrors(err),
+          errors: formatErrors(err, models),
         };
       }
     }),
-    addTeamMember: requiresAuth.createResolver(async (parent, { email, teamId }, {models, user}) => {
+
+
+    addTeamMember: requiresAuth.createResolver(async (parent, { email, teamId }, { models, user }) => {
       try {
 
         //  We have two db queries as promises. we chain them and do a promise.all resolve. 
 
-        const teamPromise =   models.findOne({where: { id: team.id}}, {raw: true}); 
-        const userToAddPromise = models.findOne({where: {email}}, {raw: true}); 
+        const teamPromise = models.Team.findOne({where: { id: teamId}}, {raw: true}); 
+        const userToAddPromise = models.User.findOne({where: {email}}, {raw: true}); 
 
         const [team, userToAdd] = await Promise.all([teamPromise, userToAddPromise]);
+        console.log(team, user)
         if ( team.owner !== user.id ) { 
           return { 
             ok: false, 
@@ -54,7 +68,7 @@ export default {
         console.log(err);
         return {
           ok: false,
-          errors: formatErrors(err),
+          errors: formatErrors(err, models),
         };
       }
     }),

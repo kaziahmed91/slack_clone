@@ -16,6 +16,7 @@ const StyledModal = styled(Modal)`
   }
 `;
 
+// ALL THIS BIZNIZZ ADDED BELOW => some of them are given by formik like values, errors, touched etc.
 const AddChannelModal = ({
   open,
   onClose,
@@ -23,17 +24,18 @@ const AddChannelModal = ({
   handleChange,
   handleBlur,
   handleSubmit,
-  isSubmitting
+  isSubmitting,
 }) => (
+  
   <StyledModal open={open} onClose={onClose}>
     <Modal.Header>Add Channel</Modal.Header>
     <Modal.Content>
       <Form>
-        <Form.Field>
+        <Form.Field> 
           <Input
-            value={values.name}
-            onChange={handleChange}
-            onBlur={handleBlur}
+            value={values.name} // formik
+            onChange={handleChange} // formik
+            onBlur={handleBlur} // formik
             name="name"
             fluid
             placeholder="Channel name"
@@ -45,7 +47,7 @@ const AddChannelModal = ({
           </Button>
           <Button
             disabled={isSubmitting}
-            onClick={handleSubmit}
+            onClick={handleSubmit} // formik 
             type="submit"
             fluid
           >
@@ -55,6 +57,7 @@ const AddChannelModal = ({
       </Form>
     </Modal.Content>
   </StyledModal>
+  
 );
 
 const createChannelMutation = gql`
@@ -69,28 +72,36 @@ const createChannelMutation = gql`
   }
 `;
 
-export default compose(
-  // Compose allows adding multiple higher order functions.
+export default compose( // Compose allows adding multiple higher order functions => given by Apollo
+  
   graphql(createChannelMutation),
+  // This shizz below straight up copied from Formik github
   withFormik({
+    // Transfer outer props into values for formic (its the name = name for us )
     mapPropsToValues: () => ({ name: "" }), // the name here is mapped to  input values.name
-    handleSubmit: async (values,{ props: { onClose, teamId, mutate }, setSubmitting }) => 
+    handleSubmit: async (values, { props: { onClose, teamId, mutate }, setSubmitting }) => 
     {
       await mutate({
         variables: { teamId, name: values.name },
-        update: (store, { data: { createChannel } }) => {
+        // Update is a Apollo GQL thing under Optimistic UI - createChannel is the mutation listed above
+        // This happens after we mutate in the mutate function as listed below
+        update: (store, { data: { createChannel } }) => { 
             const { ok, channel } = createChannel; 
             if (!ok) {
                 return; 
             }
+            // Once the update happens, the following reads the allTeamsQuery (imported above)
             const data = store.readQuery({ query: allTeamsQuery });
+            // Find sthe new id that we just created
             const teamIdx = findIndex(data.allTeams, ['id', Number(teamId)]);
-            data.allTeams[teamIdx].channels.push(channel);
-            store.writeQuery({ query: allTeamsQuery, data });
-
+            // and updates the number of teams available to the new channel
+            data.allTeams[teamIdx].channels.push(channel); 
+            store.writeQuery({ query: allTeamsQuery, data });   
         },
+        // The following is also an Appollo feature.
+          // Before the update occurs, the view is populated with some fake data.
         optimisticResponse: {
-            __typename: "Mutation",
+            __typename: "Mutation", // we pass the prpops given to our mutation above
             createChannel: {
               teamId,
               __typename: "Channel",

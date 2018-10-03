@@ -10,7 +10,7 @@ import ViewTeam from './ViewTeam';
 
 // This is the front end authentication to redirect if user is not logged in. `
 const isAuthenticated = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); // localstorage is a global obj. 
   const refreshToken = localStorage.getItem('refreshToken');
   try {
     decode(token);
@@ -22,10 +22,12 @@ const isAuthenticated = () => {
   return true;
 };
 // Notice createTeam is a private route below. 
-// The following is a higher order-ish component that takes the route 
+// The following is a higher order-ish component that runs isAuthenticated. and then does a ternary.
 const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} 
-      render={props =>( isAuthenticated() ? 
+  <Route 
+    {...rest} 
+    render={props =>(
+      isAuthenticated() ? 
       ( <Component {...props} /> ) : 
       ( <Redirect to={{ pathname: '/login', }} /> )
     )}
@@ -38,7 +40,8 @@ export default () => (
       <Route path="/" exact component={Home} />
       <Route path="/register" exact component={Register} />
       <Route path="/login" exact component={Login} />
-      <Route path="/viewTeam/:teamId?/:channelId?" exact component={ViewTeam} />
+      <PrivateRoute path="/viewTeam/:teamId?/:channelId?" exact component={ViewTeam} /> 
+      {/* /:teamId?/ is an optional parameter */}
       <PrivateRoute path="/createTeam" exact component={CreateTeam} />
     </Switch>
   </BrowserRouter>

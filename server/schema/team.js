@@ -14,7 +14,7 @@ export default `
 
   type CreateTeamResponse {
     ok: Boolean!
-    team: Team!
+    team: Team
     errors: [Error]
   }
 
@@ -28,8 +28,8 @@ export default `
   }
 `;
 
-  // type RegisterResponse {
-  //   ok: Boolean!
-  //   user: User
-  //   errors: [Error!]
-  // }
+// type RegisterResponse {
+//   ok: Boolean!
+//   user: User
+//   errors: [Error!]
+// }

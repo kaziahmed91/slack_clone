@@ -6,10 +6,12 @@ import {graphql} from 'react-apollo';
 import gql from 'graphql-tag';
 
 class Login extends React.Component {
+
+
   constructor(props) {
     super(props);
 
-    extendObservable(this, {
+    extendObservable(this, {   // setting the initial state for mobx
       email: '',
       password: '',
       errors: {},
@@ -17,12 +19,10 @@ class Login extends React.Component {
   }
 
   onSubmit = async () => {
-    const { email, password } = this;
+    const { email, password } = this; // because we are using mobx, its not this.state, its just this. 
     const response = await this.props.mutate({
       variables: { email, password },
     });
-
-    // console.log(response);
     const {
       ok, token, refreshToken, errors,
     } = response.data.login;
@@ -41,8 +41,20 @@ class Login extends React.Component {
     }
   };
 
+  /** 
+   *  NOTE: We are not declaring onChange as ->
+   *    onChange(e) { } instead we are doing
+   *    onChange = (e) => {}
+   *  WHY: React doesnt know abt onChange but does know about constructor and render which is why it has the reference to this. 
+   *     Since we are using this.name, we have to either 
+   *    a) bind this to the constructor ->
+   *        this.onChange = this.onChange.bind(this)
+   *    b) write it like we are doing below. 
+   */
+
   onChange = (e) => {
     const { name, value } = e.target;
+    console.log(this)
     this[name] = value;
   };
 
