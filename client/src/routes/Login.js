@@ -54,7 +54,6 @@ class Login extends React.Component {
 
   onChange = (e) => {
     const { name, value } = e.target;
-    console.log(this)
     this[name] = value;
   };
 

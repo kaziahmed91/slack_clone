@@ -20,6 +20,7 @@ const createResolver = (resolver) => {
 // checks the context of the user, making sure there is a user and a user ID exists. 
 // This wraps a component; guards resolvers!!!!!  
 export default createResolver((parent, args, {user}) => {
+  console.log(parent, args)
   if (!user || !user.id) {
     throw new Error('Not authenticated');
   }

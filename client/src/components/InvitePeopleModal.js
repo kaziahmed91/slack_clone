@@ -6,6 +6,8 @@ import { compose, graphql } from "react-apollo";
 import styled from "styled-components";
 import normalizeErrors from '../normalizeErrors';
 
+// https://www.youtube.com/watch?v=Mj4xJAVs2VQ&index=24&list=PLN3n1USn4xlkdRlq3VZ1sT6SGW0-yajjL
+
 // we can have a styled.div or styled(modal) depending on component or element.\
 const StyledModal = styled(Modal)`
   && {

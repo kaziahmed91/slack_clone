@@ -18,32 +18,39 @@ import { allTeamsQuery } from '../graphql/team';
  *  The following destructuring allows us to get query string
  */ 
 
+const ViewTeam = ({ 
+  data: { loading, allTeams, invitedTeams }, 
+  match: { params: { teamId, channelId } } }) => {
 
-const ViewTeam = ({ data: { loading, allTeams }, match: { params: { teamId, channelId } } }) => {
-
-
+    
   if (loading) {
     return null;
   }
-
-  if (!allTeams.length) { // If the user does not belong to any team. 
+  console.log(allTeams, invitedTeams)
+  const teams = [...allTeams, ...invitedTeams]
+  console.log(teams)
+  /**
+   * The following is a validation for correct team id and channel id being passed as query params
+   */
+  // If we create a new user, and the user does not belong to a new team, we want a redirect
+  if (!teams.length) { // If the user does not belong to any team. 
     return (<Redirect to="/createTeam" />);
   }
 
   const teamIdInt = parseInt(teamId, 10); // Check to see if the id is always an integer
-  const teamIdx = teamIdInt ? findIndex(allTeams, ['id', teamIdInt]) : 0;
-  const team = allTeams[teamIdx];
-
-  const channelIdInt = parseInt(channelId, 10); 
-  const channelIdx = channelIdInt ? findIndex(team.channels, ['id', channelIdInt]) : 0;
-  const channel = team.channels[channelIdx];
+  const teamIdx = teamIdInt ? findIndex(teams, ['id', teamIdInt]) : 0; // if not integer then its 0
+  const team = teamIdx === -1  ? teams[0] : teams[teamIdx];
+  
+  const channelIdInt = parseInt(channelId, 10);  // check to see if channel integer
+  const channelIdx = channelIdInt ? findIndex(team.channels, ['id', channelIdInt]) : 0; // if not then 0
+  const channel = channelIdx === -1 ? team.channels[0] : team.channels[channelIdx];
   // console.log(teamId, teamIdx, team, channelId, channel);
 
   return (
     
     <AppLayout>
       <Sidebar
-        teams={allTeams.map(t => ({ id: t.id, letter: t.name.charAt(0).toUpperCase() }))}
+        teams={teams.map(t => ({ id: t.id, letter: t.name.charAt(0).toUpperCase() }))}
         team={team}
       />
       {/* { The following is like a ternary: channel ? <header></header> : null } */}
