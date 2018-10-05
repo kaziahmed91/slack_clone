@@ -19,15 +19,15 @@ import { allTeamsQuery } from '../graphql/team';
  */ 
 
 const ViewTeam = ({ 
-  data: { loading, allTeams, invitedTeams }, 
+  data: { loading, allTeams, inviteTeams }, 
   match: { params: { teamId, channelId } } }) => {
 
     
   if (loading) {
     return null;
   }
-  console.log(allTeams, invitedTeams)
-  const teams = [...allTeams, ...invitedTeams]
+  console.log(allTeams, inviteTeams)
+  const teams = [...allTeams, ...inviteTeams]
   console.log(teams)
   /**
    * The following is a validation for correct team id and channel id being passed as query params

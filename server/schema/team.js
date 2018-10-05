@@ -1,9 +1,8 @@
 export default `
-
   type Team {
     id: Int!
     name: String!
-    owner: User!
+    owner: Int!
     members: [User!]!
     channels: [Channel!]!
   }
@@ -14,7 +13,7 @@ export default `
   }
   type Query {
     allTeams: [Team!]!
-    invitedTeams: [Team!]!
+    inviteTeams: [Team!]!
   }
   type VoidResponse {
     ok: Boolean!
@@ -26,8 +25,3 @@ export default `
   }
 `;
 
-// type RegisterResponse {
-//   ok: Boolean!
-//   user: User
-//   errors: [Error!]
-// }

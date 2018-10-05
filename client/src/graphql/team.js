@@ -11,7 +11,7 @@ export const allTeamsQuery = gql`
         name
       }
     }
-    invitedTeams {
+    inviteTeams {
       id
       name
       owner
@@ -23,3 +23,16 @@ export const allTeamsQuery = gql`
   }
 `;
 
+export const idk = {};
+
+
+/**
+ *     inviteTeams {
+      id
+      name
+      channels {
+        id
+        name
+      }
+    }
+ */
