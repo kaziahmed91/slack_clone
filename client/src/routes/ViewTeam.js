@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo';
 import { Redirect } from 'react-router-dom';
 import findIndex from 'lodash/findIndex';
 import Header from '../components/Header';
-import Messages from '../components/Messages';
+import MessageContainer from '../containers/MessageContainer'
 import SendMessage from '../components/SendMessage';
 import AppLayout from '../components/AppLayout';
 import Sidebar from '../containers/Sidebar';
@@ -26,9 +26,9 @@ const ViewTeam = ({
   if (loading) {
     return null;
   }
-  console.log(allTeams, inviteTeams)
+  // console.log(allTeams, inviteTeams)
   const teams = [...allTeams, ...inviteTeams]
-  console.log(teams)
+  // console.log(teams)
   /**
    * The following is a validation for correct team id and channel id being passed as query params
    */
@@ -55,13 +55,8 @@ const ViewTeam = ({
       />
       {/* { The following is like a ternary: channel ? <header></header> : null } */}
       {channel && <Header channelName={channel.name} />} 
-      {channel && (<Messages channelId={channel.id}>
-        <ul className="message-list">
-          <li />
-          <li />
-        </ul>
-      </Messages>)}
-      <SendMessage channelName={channel.name} />
+      {channel && <MessageContainer channelId={channel.id} />}
+      {channel && <SendMessage channelName={channel.name} channelId={channel.id} />}
     </AppLayout>
   );
 };
